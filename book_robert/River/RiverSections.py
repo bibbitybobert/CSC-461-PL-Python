@@ -1,4 +1,6 @@
-import Boat as b
+from book_robert.River import Boat as b
+
+
 class RiverPart:
     def update(self):
         print('update')
@@ -19,6 +21,12 @@ class Section(RiverPart):
     def __str__(self):
         return self.top_char
 
+    def update(self):
+        if self.boat:
+            self.boat = False
+            self.top_char = '〜〜〜'
+            self.bot_char = '〜〜〜'
+
 
 class Lock(RiverPart):
     def __init__(self, behavior: int, depth: int):
@@ -35,3 +43,8 @@ class Lock(RiverPart):
 
     def __str__(self):
         return self.top_char
+
+    def update(self):
+        self.boat = False
+        self.top_char = '_X( ' + str(self.depth) + ')_'
+        self.bot_char = '.......'

@@ -84,9 +84,16 @@ def main():
             case 1:  # add default boat
                 river.add_new_boat()
             case 2:  # update one tick
-                print('TODO')
+                river.update()
             case 3:  # update X ticks
-                print('TODO')
+                try:
+                    update_num = int(cleanInput('How many updates:> '))
+                    for i in range(0, update_num):
+                        river.update()
+                        if i != update_num -1:
+                            print(str(river) + '\n')
+                except:
+                    print('Please, input a positive integer.')
             case 4:  # print out section details
                 print('TODO')
             case 5:  # add a new boat
@@ -96,11 +103,12 @@ def main():
             case 7:  # make new sim
                 print('TODO')
             case 0:  # quit
-                print('TODO')
+                print('exiting')
             case -1:  #error
                 print('TODO')
             case _:  # default
                 print('Input an option in the range 0-7')
+
 
 
 
