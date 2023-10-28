@@ -82,14 +82,14 @@ def main():
 
         match choice:
             case 1:  # add default boat
-                river.add_new_boat()
+                river.add_new_boat(1, 1)
             case 2:  # update one tick
                 river.update()
             case 3:  # update X ticks
                 try:
                     update_num = int(cleanInput('How many updates:> '))
                     for i in range(0, update_num):
-                        river.update()
+                        river.update() 
                         if i != update_num -1:
                             print(str(river) + '\n')
                 except:
@@ -97,19 +97,35 @@ def main():
             case 4:  # print out section details
                 print('TODO')
             case 5:  # add a new boat
-                print('TODO')
+                try:
+                    eng_pow = cleanInput('What engine power:> ')
+                    if '.' in eng_pow:
+                        raise TypeError
+                    else:
+                        eng_pow = int(eng_pow)
+                    trav_met = cleanInput('What travel method. (1) Steady or (2) Max :> ')
+                    if '.' in trav_met:
+                        raise TypeError
+                    else:
+                        trav_met = int(trav_met)
+                    if trav_met != 1 and trav_met != 2:
+                        raise ValueError
+                    else:
+                        river.add_new_boat(eng_pow, trav_met)
+                except TypeError:
+                    print('Please, input a positive integer')
+                except ValueError:
+                    print('Input an option in the range 1-2')
             case 6:  # make new tester
                 print('TODO')
             case 7:  # make new sim
                 print('TODO')
             case 0:  # quit
                 print('exiting')
-            case -1:  #error
+            case -1:  # error
                 print('TODO')
             case _:  # default
                 print('Input an option in the range 0-7')
-
-
 
 
 main()
