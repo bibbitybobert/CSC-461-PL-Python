@@ -1,13 +1,66 @@
+from book_robert.River import RiverSystem
+
+'''
+Grading tags in for all lines marked with *			___
+
+Tierless str meets D in SOLID (hidden test)*			___
+Check if above is done, but not its test was not reached	___
+
+1. Initial Show system\Got it compiling
+Menu\initial system working					___
+Bad input handled						___
+
+2. Add Default
+Added and shown properly					___
+Second+ item ignored						___
+
+3. Basic Update (single)
+Moves along section						___
+String format correct						___
+Iterator used*							___
+
+4. Basic Update (multiple)					___
+
+5. Multi Update
+Updates correctly						___
+Bad input handled						___
+
+6. Show details
+Shows details properly 						___
+Iterator used*							___
+
+6. Add user specified item
+Basic movement still works					___
+Powered works							___
+No passing							___
+
+7. Tester part 1
+Boats works up to second lock 					___
+Formatting correct 						___
+
+8. Tester part 2
+Boats works up to end						___
+Strategy pattern for basic fill*				___
+Strategy pattern for fast empty*				___
+
+9. Custom belt **
+String formatting correct					___
+Everything still works 						___
+Bad input handled 						___
+'''
+
 
 def cleanInput(prompt):
     result = input(prompt)
     # strips out blank lines in input
     while result == '':
-        result = input( )
+        result = input()
 
     return result
 
-def main( ):
+
+def main():
+    river = RiverSystem.RiverSystem()
     menu = "\n" \
            "1) Add Default Boat\n" \
            "2) Update One Tick\n" \
@@ -18,50 +71,61 @@ def main( ):
            "7) Make New Simulator\n" \
            "0) Quit\n"
 
-
     choice = -1
     while choice != 0:
+        print(str(river))
+        print(menu)
+        try:
+            choice = int(cleanInput("Choice:> "))
+        except:
+            print('Please, input a positive integer.')
 
-        print( menu )
-        choice = cleanInput( "Choice:> " )
+        match choice:
+            case 1:  # add default boat
+                river.add_new_boat(1, 1)
+            case 2:  # update one tick
+                river.update()
+            case 3:  # update X ticks
+                try:
+                    update_num = int(cleanInput('How many updates:> '))
+                    for i in range(0, update_num):
+                        river.update() 
+                        if i != update_num -1:
+                            print(str(river) + '\n')
+                except:
+                    print('Please, input a positive integer.')
+            case 4:  # print out section details
+                print('TODO')
+            case 5:  # add a new boat
+                try:
+                    eng_pow = cleanInput('What engine power:> ')
+                    if '.' in eng_pow:
+                        raise TypeError
+                    else:
+                        eng_pow = int(eng_pow)
+                    trav_met = cleanInput('What travel method. (1) Steady or (2) Max :> ')
+                    if '.' in trav_met:
+                        raise TypeError
+                    else:
+                        trav_met = int(trav_met)
+                    if trav_met != 1 and trav_met != 2:
+                        raise ValueError
+                    else:
+                        river.add_new_boat(eng_pow, trav_met)
+                except TypeError:
+                    print('Please, input a positive integer')
+                except ValueError:
+                    print('Input an option in the range 1-2')
+            case 6:  # make new tester
+                print('TODO')
+            case 7:  # make new sim
+                print('TODO')
+            case 0:  # quit
+                print('exiting')
+            case -1:  # error
+                print('TODO')
+            case _:  # default
+                print('Input an option in the range 0-7')
 
-        # add default box
-        if choice == 1:
-            print( "TODO" )
 
-        # update one time
-        elif choice == 2:
-            print( "TODO" )
-
-        # update X number of times
-        elif choice == 3:
-            print( "TODO" )
-
-        # print out station details
-        elif choice == 4:
-            print( "TODO" )
-
-        # make a new box of any size
-        elif choice == 5:
-            print( "TODO" )
-
-        # make new system
-        elif choice == 6:
-            print( "TODO" )
-
-        # make new system
-        elif choice == 7:
-            print( "TODO" )
-
-        # debug/check for D in SOLID in __str__
-        elif choice == -1:
-            print( "TODO" )
-
-        elif choice == 0 or '0':
-            choice = 0
-        else:
-            print( "Input an option in the range 0-7" )
-
-
-if __name__ == '__main__':
-    main( )
+main()
