@@ -95,7 +95,7 @@ def main():
                 except:
                     print('Please, input a positive integer.')
             case 4:  # print out section details
-                print('TODO')
+                river.print_sec_deets()
             case 5:  # add a new boat
                 try:
                     eng_pow = cleanInput('What engine power:> ')
@@ -117,9 +117,27 @@ def main():
                 except ValueError:
                     print('Input an option in the range 1-2')
             case 6:  # make new tester
-                print('TODO')
+                river.new_test_river()
             case 7:  # make new sim
-                print('TODO')
+                sim_choice = 'y'
+                river.clear_river()
+                while sim_choice != 'n':
+                    try:
+                        s_or_l = int(cleanInput('Section (1) or Lock (2):> '))
+                        if s_or_l == 1:
+                            new_len = int(cleanInput('Length:> '))
+                            new_flow = int(cleanInput('Flow:> '))
+                            river.add_section(new_len, new_flow)
+                        elif s_or_l == 2:
+                            new_behavior = int(cleanInput('Fill behavior: None (1), Basic (2), or Fast Empty (3):> '))
+                            new_depth = int(cleanInput('Depth:> '))
+                            river.add_lock(new_behavior, new_depth)
+                        else:
+                            raise ValueError
+                    except:
+                        print('Cannot accept value')
+
+                    sim_choice = cleanInput('\nAdd another component (n to stop):> ')
             case 0:  # quit
                 print('exiting')
             case -1:  # error

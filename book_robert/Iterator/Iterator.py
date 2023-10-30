@@ -1,3 +1,6 @@
+from book_robert.River import RiverSections as rs
+
+
 class Iterator:
     def __init__(self, in_list: list):
         self.__list = in_list
@@ -30,8 +33,9 @@ class Iterator:
         except:
             return None
 
-    def get_backwards_iterator(self):
+    def get_sec_iterator(self):
         return self.SectionIterator(self.__list)
+
 
     class SectionIterator:
         def __init__(self, in_list: list):
@@ -40,12 +44,13 @@ class Iterator:
 
         def __iter__(self):
             self.__index = 0
+            return self
 
         def __next__(self):
             try:
-                self.__index -= 1
+                self.__index += 1
+                while type(self.__list[self.__index]) is rs.Lock:
+                    self.__index += 1
                 return self.__list[self.__index]
             except:
                 raise StopIteration()
-
-

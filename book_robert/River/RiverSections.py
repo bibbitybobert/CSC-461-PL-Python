@@ -41,9 +41,8 @@ class Section(RiverPart):
             self.boat_num += 1
 
     def returns_boat(self):
-        for s in self:
-            if s.has_boat and s.boat.behavior(s.boat.power, self.flow) + s.addr >= len(self.subsec):
-                return s.boat
+        if self.subsec[-1].has_boat:
+            return self.subsec[-1].boat
         return None
 
     def update(self):
@@ -53,7 +52,12 @@ class Section(RiverPart):
                 next_loc = moving_boat.behavior(moving_boat.power, self.flow) + s.addr
                 if next_loc < len(self.subsec):
                     self.subsec[next_loc].add_boat(moving_boat)
+                elif s.addr != len(self.subsec):
+                    self.subsec[-1].add_boat(moving_boat)
                 s.remove_boat()
+
+    def print_deets(self):
+        return 'Boats: ' + str(self.boat_num) + ' Flow: ' + str(self.flow)
 
     def can_accept(self):
         if not self.subsec[0].has_boat:
@@ -100,11 +104,10 @@ class SubSec:
 
 
 class Lock(RiverPart):
-    def __init__(self, min_depth: int, max_depth: int):
+    def __init__(self, depth: int):
         super().__init__()
-        self.min = min_depth
-        self.max = max_depth
-        self.curr = min_depth
+        self.depth = depth
+        self.curr = 0
         self.top_char = list(['_', 'X', '(', ' ', str(self.curr), ')', '_'])
         self.bot_char = list(['.'] * 7)
         self.behavior = None
@@ -132,7 +135,7 @@ class Lock(RiverPart):
         return ''.join(self.bot_char)
 
     def returns_boat(self):
-        if self.boat_num == 1 and self.curr == self.max:
+        if self.boat_num == 1 and self.curr + 1 >= self.depth:
             return self.boat
         else:
             return None
@@ -145,13 +148,16 @@ class Lock(RiverPart):
 
     def update(self):
         if self.boat is not None:
-            if self.curr == self.max:
+            if self.curr == self.depth:
+                self.exit_boat()
+            elif self.curr + 1 == self.depth:
+                self.curr += self.behavior('Fill')
                 self.exit_boat()
             else:
                 self.curr += self.behavior('Fill')
         else:
-            if self.curr == self.max:
+            if self.curr > 0:
                 self.curr -= self.behavior('Drain')
 
     def can_accept(self):
-        return True if self.curr == self.min and self.boat_num ==0 else False
+        return True if self.curr == 0 and self.boat_num ==0 else False

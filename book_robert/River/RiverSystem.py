@@ -6,12 +6,19 @@ class RiverSystem:
     boat_id = 0
 
     def __init__(self):
-        lock = rs.Lock(0, 0)
+        lock = rs.Lock(0)
         lock.set_behavior(1)
-        self.river = list([rs.Section(6, 0), lock, rs.Section(3, 0)])
+        self.__it_type = 1
+        self.river = []
+        self.add_section(6, 0)
+        self.add_lock(1, 0)
+        self.add_section(3, 1)
 
     def __iter__(self):
-        self.__it = i.Iterator(self.river)
+        if self.__it_type == 1:
+            self.__it = i.Iterator(self.river)
+        else:
+            self.__it = i.Iterator(self.river).get_sec_iterator()
         return self.__it
 
     def __str__(self):
@@ -37,3 +44,32 @@ class RiverSystem:
                 mov_boat = next_section.returns_boat()
                 if mov_boat is not None and can_accept:
                     u.import_boat(mov_boat)
+
+    def print_sec_deets(self):
+        count = 1
+        self.__it_type = 2
+        for sec in self:
+            print('Section ' + str(count))
+            sec.print_deets()
+            count += 1
+        self.__it_type = 1
+
+    def new_test_river(self):
+        self.clear_river()
+        self.add_section(5, 0)
+        self.add_lock(1, 0)
+        self.add_section(6, 2)
+        self.add_lock(2, 2)
+        self.add_section(3, 3)
+        self.add_lock(3, 5)
+
+    def add_section(self, size, flow):
+        self.river.append(rs.Section(size, flow))
+
+    def add_lock(self, behavior, depth):
+        add_lock = rs.Lock(depth)
+        add_lock.set_behavior(behavior)
+        self.river.append(add_lock)
+
+    def clear_river(self):
+        self.river = []
