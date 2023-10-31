@@ -6,7 +6,7 @@ class Iterator:
         self.__list = in_list
         self.__index = 0
 
-    def __iter__(self):
+    def __iter__(self):  # GRADING: ITER_ALL
         self.__index = 0
         return self
 
@@ -34,23 +34,23 @@ class Iterator:
             return None
 
     def get_sec_iterator(self):
-        return self.SectionIterator(self.__list)
+        return SectionIterator(self.__list)
 
 
-    class SectionIterator:
-        def __init__(self, in_list: list):
-            self.__list = in_list
-            self.__index = 0
+class SectionIterator:  # GRADING: ITER_RESTRICT
+    def __init__(self, in_list: list):
+        self.__list = in_list
+        self.__index = -1
 
-        def __iter__(self):
-            self.__index = 0
-            return self
+    def __iter__(self):
+        self.__index = -1
+        return self
 
-        def __next__(self):
-            try:
+    def __next__(self):
+        try:
+            self.__index = self.__index + 1
+            while type(self.__list[self.__index]) is not rs.Section:
                 self.__index += 1
-                while type(self.__list[self.__index]) is rs.Lock:
-                    self.__index += 1
-                return self.__list[self.__index]
-            except:
-                raise StopIteration()
+            return self.__list[self.__index]
+        except:
+            raise StopIteration()

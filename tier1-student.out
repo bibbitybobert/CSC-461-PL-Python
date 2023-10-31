@@ -11,8 +11,6 @@
 0) Quit
 
 Choice:> Input an option in the range 0-7
-〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜_X( 0)_〜〜〜〜〜〜〜〜〜
-〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜.......〜〜〜〜〜〜〜〜〜
 
 1) Add Default Boat
 2) Update One Tick
@@ -24,8 +22,6 @@ Choice:> Input an option in the range 0-7
 0) Quit
 
 Choice:> Input an option in the range 0-7
-〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜_X( 0)_〜〜〜〜〜〜〜〜〜
-〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜.......〜〜〜〜〜〜〜〜〜
 
 1) Add Default Boat
 2) Update One Tick
@@ -36,10 +32,7 @@ Choice:> Input an option in the range 0-7
 7) Make New Simulator
 0) Quit
 
-Choice:> Please, input a positive integer.
-Input an option in the range 0-7
-〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜_X( 0)_〜〜〜〜〜〜〜〜〜
-〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜.......〜〜〜〜〜〜〜〜〜
+Choice:> Please, input a positive integer
 
 1) Add Default Boat
 2) Update One Tick
@@ -50,4 +43,4 @@ Input an option in the range 0-7
 7) Make New Simulator
 0) Quit
 
-Choice:> TODO
+Choice:> 

@@ -14,6 +14,7 @@ class Section(RiverPart):
         super().__init__()
         self.flow = flow
         self.subsec = []
+        self.size = size
         for i in range(0, size):
             self.subsec.append(SubSec(i))
 
@@ -32,9 +33,9 @@ class Section(RiverPart):
             out_str = bstr.str2() + out_str
         return out_str
 
-    def add_boat(self, boat_id: int, power: int, method: int):
+    def add_boat(self, power: int, method: int):
+        new_boat = b.Boat(power)
         if not self.subsec[0].has_boat:
-            new_boat = b.Boat(boat_id, power)
             new_boat.setBehavior(method)
             new_boat.speed = new_boat.behavior(power, self.flow)
             self.subsec[0].add_boat(new_boat)
@@ -42,22 +43,34 @@ class Section(RiverPart):
 
     def returns_boat(self):
         if self.subsec[-1].has_boat:
+            self.boat_num -= 1
             return self.subsec[-1].boat
         return None
 
-    def update(self):
+    def update(self, return_boat):
         for s in self:
             moving_boat = s.returns_boat()
             if moving_boat is not None:
-                next_loc = moving_boat.behavior(moving_boat.power, self.flow) + s.addr
-                if next_loc < len(self.subsec):
+                movement = moving_boat.behavior(moving_boat.power, self.flow)
+                if movement + s.addr < len(self.subsec):
+                    next_loc = s.addr + movement
+                    for j in range(1, movement):
+                        if self.subsec[s.addr + j].has_boat:
+                            next_loc = s.addr + j - 1
+                            break
                     self.subsec[next_loc].add_boat(moving_boat)
-                elif s.addr != len(self.subsec):
-                    self.subsec[-1].add_boat(moving_boat)
-                s.remove_boat()
+                elif s.addr != self.size - 1:
+                    next_loc = -1
+                    for j in range(1, self.size - s.addr):
+                        if self.subsec[s.addr + j].has_boat:
+                            next_loc = s.addr + j - 1
+                            break
+                    self.subsec[next_loc].add_boat(moving_boat)
+                if s.addr != self.size - 1 or return_boat:
+                    s.remove_boat()
 
     def print_deets(self):
-        return 'Boats: ' + str(self.boat_num) + ' Flow: ' + str(self.flow)
+        return 'Boats: ' + str(self.boat_num) + ' Flow: ' + str(self.flow) + '\n'
 
     def can_accept(self):
         if not self.subsec[0].has_boat:
@@ -67,6 +80,7 @@ class Section(RiverPart):
     def import_boat(self, boat: b.Boat):
         self.subsec[0].add_boat(boat)
         self.subsec[0].boat.speed = boat.behavior(boat.power, self.flow)
+        self.boat_num += 1
 
 
 class SubSec:
@@ -80,13 +94,13 @@ class SubSec:
     def add_boat(self, boat: b.Boat):
         self.has_boat = True
         self.boat = boat
-        self.char = boat.char + '〜〜'
-        self.bot = str(boat.id) + '〜〜'
+        self.char = boat.char.ljust(3, '〜')
+        self.bot = str(boat.id).ljust(3, '〜')
 
     def remove_boat(self):
         self.has_boat = False
         self.boat = None
-        self.char = self.char = '〜〜〜'
+        self.char = '〜〜〜'
         self.bot = '〜〜〜'
 
     def __str__(self):
@@ -108,16 +122,16 @@ class Lock(RiverPart):
         super().__init__()
         self.depth = depth
         self.curr = 0
-        self.top_char = list(['_', 'X', '(', ' ', str(self.curr), ')', '_'])
-        self.bot_char = list(['.'] * 7)
+        self.top_char = '_X(' + str(self.curr).rjust(2) +  ')_'
+        self.bot_char = '.' * 7
         self.behavior = None
         self.boat = None
 
     def import_boat(self, boat: b.Boat):
         self.boat = boat
         self.boat_num = 1
-        self.top_char[1] = boat.char
-        self.bot_char[1] = str(boat.id)
+        self.top_char = '_' + self.boat.char + '(' + str(self.curr).rjust(2) + ')_'
+        self.bot_char = str(boat.id).ljust(2, '.') + self.bot_char[2:]
 
     def set_behavior(self, behavior: int):
         if behavior == 1:
@@ -128,11 +142,11 @@ class Lock(RiverPart):
             self.behavior = lb.fast
 
     def __str__(self):
-        self.top_char[4] = str(self.curr)
-        return ''.join(self.top_char)
+        self.top_char = self.top_char[0:3] + str(self.curr).rjust(2) + self.top_char[5:]
+        return self.top_char
 
     def str2(self):
-        return ''.join(self.bot_char)
+        return self.bot_char
 
     def returns_boat(self):
         if self.boat_num == 1 and self.curr + 1 >= self.depth:
@@ -143,21 +157,28 @@ class Lock(RiverPart):
     def exit_boat(self):
         self.boat = None
         self.boat_num = 0
-        self.top_char[1] = 'X'
-        self.bot_char[1] = '.'
+        self.top_char = '_X(' + str(self.curr).rjust(2) + ')_'
+        self.bot_char = '..' + self.bot_char[2:]
 
-    def update(self):
+    def update(self, return_boat):
         if self.boat is not None:
-            if self.curr == self.depth:
-                self.exit_boat()
-            elif self.curr + 1 == self.depth:
-                self.curr += self.behavior('Fill')
-                self.exit_boat()
+            if return_boat:
+                if self.curr == self.depth:
+                    self.exit_boat()
+                elif self.curr + 1 == self.depth:
+                    self.curr += self.behavior('Fill')
+                    self.exit_boat()
+                else:
+                    self.curr += self.behavior('Fill')
             else:
-                self.curr += self.behavior('Fill')
+                if self.curr != self.depth:
+                    self.curr += self.behavior('Fill')
         else:
             if self.curr > 0:
-                self.curr -= self.behavior('Drain')
+                drain = self.behavior('Drain')
+                while self.curr - drain < 0:
+                    drain -= 1
+                self.curr -= drain
 
     def can_accept(self):
-        return True if self.curr == 0 and self.boat_num ==0 else False
+        return True if self.curr == 0 and self.boat_num == 0 else False

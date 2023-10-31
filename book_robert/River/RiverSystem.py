@@ -1,9 +1,9 @@
 from book_robert.River import RiverSections as rs
 from book_robert.Iterator import Iterator as i
+from book_robert.Boat import Boat as b
 
 
 class RiverSystem:
-    boat_id = 0
 
     def __init__(self):
         lock = rs.Lock(0)
@@ -24,7 +24,7 @@ class RiverSystem:
     def __str__(self):
         top_str = ''
         bot_str = ''
-        for rsstr in self:
+        for rsstr in self:  # GRADING: LOOP_ALL
             top_str = str(rsstr) + top_str
         top_str += '\n'
         for rsstr in self:
@@ -32,25 +32,26 @@ class RiverSystem:
         return top_str + bot_str
 
     def add_new_boat(self, power: int, behavior: int):
-        self.boat_id += 1
-        self.river[0].add_boat(self.boat_id, power, behavior)
+        self.river[0].add_boat(power, behavior)
 
     def update(self):
+        return_boat = True
         for u in self:
-            u.update()
+            u.update(return_boat)
             can_accept = u.can_accept()
             next_section = self.__it.peek()
-            if next_section is not None:
+            if next_section is not None and can_accept:
                 mov_boat = next_section.returns_boat()
-                if mov_boat is not None and can_accept:
+                if mov_boat is not None:
                     u.import_boat(mov_boat)
+            return_boat = can_accept
 
     def print_sec_deets(self):
         count = 1
         self.__it_type = 2
-        for sec in self:
+        for sec in self:  # GRADING: LOOP_RESTRICT
             print('Section ' + str(count))
-            sec.print_deets()
+            print(sec.print_deets())
             count += 1
         self.__it_type = 1
 
@@ -73,3 +74,21 @@ class RiverSystem:
 
     def clear_river(self):
         self.river = []
+
+    def print_boat_forms(self):
+        new_boat_1 = b.Boat(1)
+        new_boat_2 = b.Boat(1)
+
+        subsec = rs.SubSec(-1)
+        subsec.add_boat(new_boat_1)
+
+        test_lock = rs.Lock(0)
+        test_lock.import_boat(new_boat_2)
+
+        self.add_new_boat(1, 1)
+
+        # GRADING: TO_STR
+        print(new_boat_1)
+        print(subsec)
+        print(test_lock)
+        print(self)
