@@ -51,6 +51,11 @@ Bad input handled 						_yes_
 
 
 def cleanInput(prompt):
+    """
+    Given function from Prof to get clean input
+    :param prompt: text prompt to print before reading input
+    :return: clean input
+    """
     result = input(prompt)
     # strips out blank lines in input
     while result == '':
@@ -58,7 +63,12 @@ def cleanInput(prompt):
 
     return result
 
+
 def main():
+    """
+    Main menu function to deal with user interaction and call correct functions depending on input
+    :return: Nothing
+    """
     river = RiverSystem.RiverSystem()
     menu = "\n" \
            "1) Add Default Boat\n" \
@@ -97,7 +107,7 @@ def main():
 
                     for i in range(0, update_num):
                         river.update()
-                        if i != update_num -1:
+                        if i != update_num - 1:
                             print(str(river) + '\n')
                     print(river)
                 case 4:  # print out section details
